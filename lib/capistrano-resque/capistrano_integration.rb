@@ -45,7 +45,7 @@ module CapistranoResque
                 pid = "./tmp/pids/resque_worker_#{worker_id}.pid"
                 run "cd #{current_path} && RAILS_ENV=#{app_env} QUEUE=\"#{queue}\" \
   PIDFILE=#{pid} BACKGROUND=yes LOGFILE=./log/resque-worker#{worker_id}.log VVERBOSE=#{verbosity}  \
-  bundle exec rake environment resque:work"
+  bundle exec rake environment resque:work", :roles => :app
                 worker_id += 1
               end
             end
@@ -57,9 +57,9 @@ module CapistranoResque
               if remote_file_exists?(pid)
                 if remote_process_exists?(pid)
                   logger.important("Stopping...", "Resque Worker: #{pid}")
-                  run "#{try_sudo} kill `cat #{pid}`"
+                  run "#{try_sudo} kill `cat #{pid}`", :roles => :app
                 else
-                  run "rm #{pid}"
+                  run "rm #{pid}", :roles => :app
                   logger.important("Resque Worker #{pid} is not running.", "Resque")
                 end
               else
